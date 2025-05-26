@@ -6,5 +6,5 @@ const cartSchema=mongoose.Schema({
     user_id:String,
     quantity:Number,
 })
-const cartSchemaModel=mongoose.model('cart',cartSchema)
+const cartSchemaModel=mongoose.model('carts',cartSchema)
 module.exports=cartSchemaModel

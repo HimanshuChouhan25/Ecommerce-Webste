@@ -1,4 +1,10 @@
 const mongoose=require('mongoose')
-const url="mongodb://localhost:27017/nageshProject"
+
+const connect = ()=>{
+   const url="mongodb://localhost:27017/nageshProject"
 mongoose.connect(url);
-console.log("db Connected");
+console.log("db Connected"); 
+}
+
+module.exports = connect
+

@@ -1,0 +1,45 @@
+# swagger/swagger.yaml
+openapi: 3.0.0
+info:
+  title: E-commerce API
+  version: 1.0.0
+  description: API documentation for the E-commerce website
+
+servers:
+  - url: http://localhost:5000
+
+tags:
+  - name: User
+    description: Operations related to users
+
+paths:
+  /api/users/register:
+    post:
+      tags:
+        - User
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - password
+                - name
+              properties:
+                email:
+                  type: string
+                  example: user@example.com
+                password:
+                  type: string
+                  example: password123
+                name:
+                  type: string
+                  example: Himanshu
+      responses:
+        '201':
+          description: User created
+        '400':
+          description: Invalid input

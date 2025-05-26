@@ -3,7 +3,7 @@ const mongoose=require('mongoose')
 const productSchema=mongoose.Schema({
 p_name:String,
 
-p_id:{type:Number,unique:true},
+p_id:{type:String,unique:true},
 p_price:Number,
 p_description:String,
 p_company:String,

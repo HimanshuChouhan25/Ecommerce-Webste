@@ -1,64 +1,84 @@
 const { default: mongoose } = require('mongoose');
-const cartSchemaModel=require('../models/cart.model')
+const cartSchemaModel = require('../models/cart.model')
 
-const cartAllProducts=async (req,res,next)=>{
-    console.log(req.body.user_id);
-    try{
+const cartAllProducts = async (req, res) => {
+  console.log(req.body.user_id);
+  try {
     // let cartProducts=await cartSchemaModel.find({user_id:req.body.user_id})
 
     const findAddedProducts = async (userId, productId) => {
-      
-        const pipeline = [
-          {
-            $match: {
-              user_id: userId // Match user by ID
-            },
+
+      const pipeline = [
+        {
+          $match: {
+            user_id: userId // Match user by ID
           },
-        //   {
-        //     $unwind: "$cart" // Unwind the cart array to access each product document
-        //   },
-          // {
-          //   $match: {
-          //     "cartSchemaModel.product_id": mongoose.Types.ObjectId(productId) // Match product ID within cart
-          //   }
-          // },
-          // {
-          //   $lookup: {
-          //     from: 'Products', // Replace with your product collection name
-          //     localField: "cartSchemaModel.product_id",
-          //   //   `${cartSchemaModel.product_id}`
-          //     foreignField: "p_id",
-          //     as: "productDetails"
-          //   }
-          // },
-        //   {
-        //     $project: {
-        //       _id: 0, // Exclude user ID from output (optional)
-        //       userId: "$_id",
-        //       product: { $first: "$productDetails" } // Get the first product document from lookup
-        //     }
-        //   }
-        ];
-    
-        const addedProduct = await cartSchemaModel.aggregate(pipeline);
-        // const addedProduct = await User.aggregate(pipeline);
-        if (addedProduct.length > 0) {
-          console.log('Added product details:', addedProduct.productDetails);
-        }
 
-// 
-      res.status(200).json({data:addedProduct})
+            },
+         {
+           $lookup: {
+            from: 'products',          // Name of the collection to join
+            localField: 'product_id',        // Field in the current collection
+            foreignField: 'p_id',      // Field in the 'product' collection
+            as: 'productDetails'      // Alias for the result
+          }
+        },
+         {
+    $unwind: '$productDetails'     // Flatten the productDetails array
+  }
+      
+      ];
+
+      const cartProducts = await cartSchemaModel.aggregate(pipeline);
+      // const cartProducts = await User.aggregate(pipeline);
+      if (cartProducts.length > 0) {
+        console.log('Added product details:', cartProducts.productDetails);
+      }
+
+      // 
+      res.status(200).json({ data: cartProducts })
     }
-    findAddedProducts(req.body.user_id,null)
-}
-    catch(e){console.log(e);}
+    findAddedProducts(req.body.user_id, null)
+    // cartSchemaModel.find({user_id:req.body.user_id}).then((data)=>{
+    //     res.status(200).json({data:data})
+    // })
+  }
+  catch (e) { console.log(e); }
 
-    
+
 }
-const addProducts=async (req,res,next)=>{
-    try{
-        cartSchemaModel.create(req.body)
-    }catch(e){console.log(e);}
-    res.status(200).json({data:req.body})
+
+const addProducts = async (req, res, next) => {
+  try {
+    console.log(req.body, "add product");
+
+    cartSchemaModel.create(req.body)
+  } catch (e) { console.log(e); }
+  res.status(200).json({ data: req.body })
 }
-module.exports={cartAllProducts,addProducts}
+
+const updateQuantity = async (req, res) => {
+  try {
+    const { cartItemId, quantity } = req.body
+    // console.log(req.body,"add product");
+    const update = await cartSchemaModel.findOneAndUpdate({ _id: cartItemId },
+      {
+        quantity: quantity
+      },
+      { new: true }
+    )
+    console.log(update);
+
+    function formatCartItem(updated) {
+      const obj = updated.toObject();
+      obj.cartItemId = obj._id;
+      delete obj._id;
+      return obj;
+    }
+
+    res.status(200).json({ data: formatCartItem(update) })
+  } catch (e) { console.log(e); }
+
+}
+
+module.exports = { cartAllProducts, addProducts, updateQuantity }
