@@ -10,6 +10,7 @@ const userSchema=mongoose.Schema({
 
     },
     password:String,
+    role:String
 })
 
 const userModel=mongoose.model('users',userSchema);

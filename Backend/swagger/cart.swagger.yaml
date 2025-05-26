@@ -1,0 +1,84 @@
+paths:
+  /cart/cart-products:
+    post:
+      tags:
+        - Cart
+      summary: Get all products in the user's cart
+      description: Returns all products currently in the user's cart.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - user_id
+              properties:
+                user_id:
+                  type: string
+                  example: 64f2a74f5b3c9a001f43d4bc
+      responses:
+        '200':
+          description: List of cart products retrieved successfully
+        '401':
+          description: Unauthorized access
+
+  /cart/add-product:
+    post:
+      tags:
+        - Cart
+      summary: Add a product to the cart
+      description: Adds a specified product to the user's cart.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - productId
+                - quantity
+              properties:
+                productId:
+                  type: string
+                  example: 64f2a74f5b3c9a001f43d4bc
+                quantity:
+                  type: integer
+                  example: 2
+      responses:
+        '201':
+          description: Product added to cart successfully
+        '400':
+          description: Invalid product ID or quantity
+        '401':
+          description: Unauthorized access
+
+  /cart/update-product-quantity:
+    post:
+      tags:
+        - Cart
+      summary: Update quantity of a product in the cart
+      description: Modifies the quantity of a specific product in the user's cart.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - productId
+                - quantity
+              properties:
+                productId:
+                  type: string
+                  example: 64f2a74f5b3c9a001f43d4bc
+                quantity:
+                  type: integer
+                  example: 3
+      responses:
+        '200':
+          description: Quantity updated successfully
+        '400':
+          description: Invalid request or quantity
+        '401':
+          description: Unauthorized access
